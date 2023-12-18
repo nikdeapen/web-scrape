@@ -8,3 +8,9 @@ homepage = "https://github.com/nikdeapen/web-scrape"
 authors = ["Nik Deapen <nik@deapen.com>"]
 edition = "2021"
 license = "MIT"
+
+[dependencies]
+async-trait = "0.1.74"
+web-url = "0.1.0"
+reqwest = "0.11.22"
+scraper = "0.18.1"
