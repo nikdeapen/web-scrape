@@ -10,4 +10,5 @@ mod extractor;
 mod parser;
 mod webpage;
 
+pub mod cache;
 pub mod rq;
