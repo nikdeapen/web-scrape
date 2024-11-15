@@ -2,10 +2,13 @@ use bytes::Bytes;
 use reqwest::blocking::{Client, Request, Response};
 use reqwest::header::HeaderMap;
 use reqwest::{Method, StatusCode, Url};
+use scraper::Html;
 use web_url::WebUrl;
 
 use crate::cache::WebCache;
 use crate::error::Error;
+use crate::scrape;
+use crate::scrape::Scraper;
 
 /// Responsible for sourcing data from the web.
 #[derive(Clone, Debug)]
@@ -13,6 +16,34 @@ pub struct WebSource {
     client: Client,
     headers: HeaderMap,
     cache: Option<WebCache>,
+}
+
+impl WebSource {
+    //! Construction
+
+    /// Creates a new web source.
+    pub fn new(headers: HeaderMap, cache: Option<WebCache>) -> Self {
+        Self {
+            client: Client::default(),
+            headers,
+            cache,
+        }
+    }
+}
+
+impl WebSource {
+    //! Scrape
+
+    /// Scrapes the data from the `url`.
+    pub fn scrape<T, F>(&self, url: &WebUrl, scrape: F) -> Result<T, Error>
+    where
+        F: Fn(Scraper) -> Result<T, scrape::Error>,
+    {
+        let content: String = self.get(url)?;
+        let document: Html = Html::parse_document(content.as_str());
+        let scraper: Scraper = Scraper::from(document.root_element());
+        Ok(scrape(scraper)?)
+    }
 }
 
 impl WebSource {
