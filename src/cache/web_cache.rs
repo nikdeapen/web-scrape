@@ -16,6 +16,15 @@ pub struct WebCache {
     base_64_encoder: Base64Encoder,
 }
 
+impl From<FolderPath> for WebCache {
+    fn from(root: FolderPath) -> Self {
+        Self {
+            root,
+            base_64_encoder: Base64Encoder::new(b'-', b'_', None).unwrap(),
+        }
+    }
+}
+
 impl WebCache {
     //! Read
 
