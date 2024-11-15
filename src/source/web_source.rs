@@ -4,6 +4,7 @@ use reqwest::header::HeaderMap;
 use reqwest::{Method, StatusCode, Url};
 use web_url::WebUrl;
 
+use crate::cache::WebCache;
 use crate::error::Error;
 
 /// Responsible for sourcing data from the web.
@@ -11,13 +12,37 @@ use crate::error::Error;
 pub struct WebSource {
     client: Client,
     headers: HeaderMap,
+    cache: Option<WebCache>,
+}
+
+impl WebSource {
+    //! Get
+
+    /// Gets the text from the `url`.
+    pub fn get(&self, url: &WebUrl) -> Result<String, Error> {
+        Ok(String::from_utf8(self.get_data(url)?)?)
+    }
+
+    /// Gets the data from the `url`.
+    pub fn get_data(&self, url: &WebUrl) -> Result<Vec<u8>, Error> {
+        if let Some(cache) = &self.cache {
+            if let Some(cached) = cache.read(Method::GET, url)? {
+                return Ok(cached);
+            }
+        }
+        let data: Vec<u8> = self.download(Method::GET, url)?;
+        if let Some(cache) = &self.cache {
+            cache.write(Method::GET, url, data.as_slice())?;
+        }
+        Ok(data)
+    }
 }
 
 impl WebSource {
     //! Download
 
     /// Downloads the data from the `url`
-    pub fn download(&self, method: Method, url: &WebUrl) -> Result<Vec<u8>, Error> {
+    fn download(&self, method: Method, url: &WebUrl) -> Result<Vec<u8>, Error> {
         let response: Response = self.client.execute(self.create_request(method, url)?)?;
         match response.status() {
             StatusCode::OK | StatusCode::NO_CONTENT => {

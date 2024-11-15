@@ -10,6 +10,8 @@ edition = "2021"
 license = "MIT"
 
 [dependencies]
+enc = { git = "https://github.com/nikdeapen/enc", features = ["hex", "base-64"] }
+file-storage = { git = "https://github.com/nikdeapen/file-storage", features = ["tempfile", "r2"] }
 web-url = { git = "https://github.com/nikdeapen/web-url" }
 
 bytes = "1.8.0"

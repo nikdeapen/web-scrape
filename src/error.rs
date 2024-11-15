@@ -1,6 +1,6 @@
-use std::fmt::{Display, Formatter};
-
 use reqwest::StatusCode;
+use std::fmt::{Display, Formatter};
+use std::string::FromUtf8Error;
 use web_url::WebUrl;
 
 /// An error scraping data from the web.
@@ -14,11 +14,32 @@ pub enum Error {
 
     /// An invalid response status code.
     InvalidStatus(StatusCode),
+
+    /// A storage error.
+    Storage(file_storage::Error),
+
+    /// The text was not UTF-8.
+    InvalidText(FromUtf8Error),
+
+    /// An uncategorized error.
+    Other(String),
 }
 
 impl From<reqwest::Error> for Error {
     fn from(error: reqwest::Error) -> Self {
         Self::Protocol(error)
+    }
+}
+
+impl From<file_storage::Error> for Error {
+    fn from(error: file_storage::Error) -> Self {
+        Self::Storage(error)
+    }
+}
+
+impl From<FromUtf8Error> for Error {
+    fn from(error: FromUtf8Error) -> Self {
+        Self::InvalidText(error)
     }
 }
 
@@ -30,6 +51,9 @@ impl Display for Error {
             }
             Self::Protocol(error) => write!(f, "{}", error),
             Self::InvalidStatus(status) => write!(f, "invalid response status code: {}", status),
+            Self::Storage(error) => write!(f, "{}", error),
+            Self::InvalidText(error) => write!(f, "invalid text: {}", error),
+            Self::Other(s) => write!(f, "{}", s),
         }
     }
 }
