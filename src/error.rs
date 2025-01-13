@@ -7,6 +7,9 @@ use web_url::WebUrl;
 /// An error scraping data from the web.
 #[derive(Debug)]
 pub enum Error {
+    /// An invalid URL string.
+    InvalidURLString(web_url::parse::Error),
+
     /// An invalid URL.
     InvalidURL { url: WebUrl, error_message: String },
 
@@ -56,6 +59,9 @@ impl From<crate::scrape::Error> for Error {
 impl Display for Error {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
+            Self::InvalidURLString(error) => {
+                write!(f, "invalid url string: {}", error)
+            }
             Self::InvalidURL { url, error_message } => {
                 write!(f, "invalid url '{}': {}", url, error_message)
             }
