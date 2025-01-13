@@ -10,10 +10,10 @@ edition = "2021"
 license = "MIT"
 
 [dependencies]
-address = { path = "../address" }
-enc = { path = "../enc", features = ["base-64", "hex"] }
-file-storage = { path = "../file-storage" }
-web-url = { path = "../web-url" }
+address = { git = "https://github.com/nikdeapen/address.git" }
+enc = { git = "https://github.com/nikdeapen/enc.git", features = ["base-64", "hex"] }
+file-storage = { git = "https://github.com/nikdeapen/file-storage.git" }
+web-url = { git = "https://github.com/nikdeapen/web-url.git" }
 
 bytes = "1.9.0"
 reqwest = { version = "0.12.9", features = ["blocking"] }
