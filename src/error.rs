@@ -22,6 +22,9 @@ pub enum Error {
     /// The text was not UTF-8.
     InvalidText(FromUtf8Error),
 
+    /// A scraping error.
+    Scrape(crate::scrape::Error),
+
     /// An uncategorized error.
     Other(String),
 }
@@ -44,6 +47,12 @@ impl From<FromUtf8Error> for Error {
     }
 }
 
+impl From<crate::scrape::Error> for Error {
+    fn from(error: crate::scrape::Error) -> Self {
+        Self::Scrape(error)
+    }
+}
+
 impl Display for Error {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -54,6 +63,7 @@ impl Display for Error {
             Self::InvalidStatus(status) => write!(f, "invalid response status code: {}", status),
             Self::Storage(error) => write!(f, "{}", error),
             Self::InvalidText(error) => write!(f, "invalid text: {}", error),
+            Self::Scrape(error) => write!(f, "{}", error),
             Self::Other(s) => write!(f, "{}", s),
         }
     }
