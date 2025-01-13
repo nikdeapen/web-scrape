@@ -8,3 +8,12 @@ homepage = "https://github.com/nikdeapen/web-scrape"
 authors = ["Nik Deapen <nik@deapen.com>"]
 edition = "2021"
 license = "MIT"
+
+[dependencies]
+address = { path = "../address" }
+enc = { path = "../enc", features = ["base-64", "hex"] }
+file-storage = { path = "../file-storage" }
+web-url = { path = "../web-url" }
+
+bytes = "1.9.0"
+reqwest = { version = "0.12.9", features = ["blocking"] }
