@@ -55,6 +55,16 @@ impl<'a> Scraper<'a> {
         Ok(result)
     }
 
+    /// Scrapes all the text from the `selection`.
+    pub fn all_text(&self, selection: &str) -> Result<Vec<String>, Error> {
+        self.all(selection, |s| Ok(s.element().text().collect()))
+    }
+
+    /// Scrapes all the html from the `selection`.
+    pub fn all_html(&self, selection: &str) -> Result<Vec<String>, Error> {
+        self.all(selection, |s| Ok(s.element().html()))
+    }
+
     /// Scrapes all the successful instances of the `selection`.
     pub fn all_flat<T, F>(&self, selection: &str, scrape: F) -> Result<Vec<T>, Error>
     where
