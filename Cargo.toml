@@ -8,3 +8,11 @@ homepage = "https://github.com/nikdeapen/web-scrape"
 authors = ["Nik Deapen <nik@deapen.com>"]
 edition = "2021"
 license = "MIT"
+
+[dependencies]
+clerr = { git = "https://github.com/nikdeapen/clerr" }
+enc = { git = "https://github.com/nikdeapen/enc", features = ["base-64", "hex"] }
+file-storage = { git = "https://github.com/nikdeapen/file-storage" }
+web-url = { git = "https://github.com/nikdeapen/web-url" }
+
+colored = "3.0.0"
