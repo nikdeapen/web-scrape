@@ -2,6 +2,8 @@ use std::fmt::{Display, Formatter};
 use std::string::FromUtf8Error;
 
 use clerr::Report;
+use reqwest::StatusCode;
+use web_url::WebUrl;
 
 /// An error scraping data from the web.
 #[derive(Debug)]
@@ -9,8 +11,17 @@ pub enum Error {
     /// A storage error.
     Storage(file_storage::Error),
 
+    /// The URL was invalid.
+    InvalidURL { url: WebUrl, error_message: String },
+
     /// An error converting the web content to UTF-8.
     InvalidText(FromUtf8Error),
+
+    /// A protocol error.
+    Protocol(reqwest::Error),
+
+    /// An invalid response status was received.
+    InvalidResponseStatus(StatusCode),
 
     /// An error report.
     Other(Report),
@@ -25,6 +36,12 @@ impl From<file_storage::Error> for Error {
 impl From<FromUtf8Error> for Error {
     fn from(error: FromUtf8Error) -> Self {
         Self::InvalidText(error)
+    }
+}
+
+impl From<reqwest::Error> for Error {
+    fn from(error: reqwest::Error) -> Self {
+        Self::Protocol(error)
     }
 }
 
