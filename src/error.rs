@@ -16,6 +16,12 @@ pub enum Error {
     /// The URL was invalid.
     InvalidURL { url: WebUrl, error_message: String },
 
+    /// The URL string was invalid.
+    InvalidURLString {
+        url: String,
+        error: web_url::parse::Error,
+    },
+
     /// An error converting the web content to UTF-8.
     InvalidText(FromUtf8Error),
 
