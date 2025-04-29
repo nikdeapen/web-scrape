@@ -5,6 +5,8 @@ use clerr::Report;
 use reqwest::StatusCode;
 use web_url::WebUrl;
 
+use crate::scrape::ScrapeError;
+
 /// An error scraping data from the web.
 #[derive(Debug)]
 pub enum Error {
@@ -29,6 +31,9 @@ pub enum Error {
     /// An invalid response status was received.
     InvalidResponseStatus(StatusCode),
 
+    /// A scraping error.
+    Scrape(ScrapeError),
+
     /// An error report.
     Other(Report),
 }
@@ -48,6 +53,12 @@ impl From<FromUtf8Error> for Error {
 impl From<reqwest::Error> for Error {
     fn from(error: reqwest::Error) -> Self {
         Self::Protocol(error)
+    }
+}
+
+impl From<ScrapeError> for Error {
+    fn from(error: ScrapeError) -> Self {
+        Self::Scrape(error)
     }
 }
 
