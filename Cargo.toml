@@ -1,6 +1,6 @@
 [package]
 name = "web-scrape"
-version = "0.5.0-rc.2"
+version = "0.5.0"
 description = "This library aids in scraping data from the web."
 readme = "README.md"
 repository = "https://github.com/nikdeapen/web-scrape"
@@ -13,8 +13,8 @@ license = "MIT"
 bytes = "1.10.0"
 clerr = "0.5.0-rc.1"
 colored = "3.0.0"
-enc = { version = "0.14.0-rc.2", features = ["base-64", "hex"] }
-file-storage = "0.4.0-rc.1"
+enc = { version = "0.14.0", features = ["base-64", "hex"] }
+file-storage = "0.4.0"
 reqwest = { version = "0.12.12", features = ["blocking"] }
 scraper = "0.24.0"
 web-url = "0.7.0"
