@@ -6,4 +6,4 @@ This library aids in scraping data from the web.
 
 There are no optional features.
 
-    web-scrape = "0.5.0"
+    web-scrape = "0.6.0"
