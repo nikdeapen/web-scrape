@@ -1,3 +1,4 @@
+use crate::scrape::ScrapeError;
 use clerr::Report;
 use reqwest::StatusCode;
 use std::fmt::{Display, Formatter};
@@ -28,6 +29,9 @@ pub enum Error {
     /// An invalid response status was received.
     InvalidResponseStatus(StatusCode),
 
+    /// A scraping error.
+    Scrape(ScrapeError),
+
     /// An error report.
     Other(Report),
 }
@@ -47,6 +51,12 @@ impl From<FromUtf8Error> for Error {
 impl From<reqwest::Error> for Error {
     fn from(error: reqwest::Error) -> Self {
         Self::Protocol(error)
+    }
+}
+
+impl From<ScrapeError> for Error {
+    fn from(error: ScrapeError) -> Self {
+        Self::Scrape(error)
     }
 }
 

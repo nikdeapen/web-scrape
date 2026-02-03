@@ -1,9 +1,11 @@
 use crate::cache::WebCache;
 use crate::error::Error;
+use crate::scrape::{ScrapeError, Scraper};
 use bytes::Bytes;
 use reqwest::blocking::{Client, Request, Response};
 use reqwest::header::HeaderMap;
 use reqwest::{Method, StatusCode, Url};
+use scraper::Html;
 use web_url::WebUrl;
 
 /// Responsible for sourcing data from the web.
@@ -24,6 +26,21 @@ impl WebSource {
             headers,
             cache,
         }
+    }
+}
+
+impl WebSource {
+    //! Scrape
+
+    /// Scrapes the content from the `url` with the `scrape` function.
+    pub fn scrape<F, T>(&self, url: &WebUrl, scrape: F) -> Result<T, Error>
+    where
+        F: Fn(Scraper) -> Result<T, ScrapeError>,
+    {
+        let content: String = self.get(url)?;
+        let document: Html = Html::parse_document(content.as_str());
+        let scraper: Scraper = Scraper::from(document.root_element());
+        Ok(scrape(scraper)?)
     }
 }
 
