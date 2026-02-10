@@ -4,13 +4,13 @@ This library aids in scraping data from the web.
 
 ## Features & Dependencies
 
-    web-scrape = "0.9.0-rc.2"
+    web-scrape = "0.9.0"
 
 There are currently no optional features.
 
 ### Dependencies
 
-    bytes           # for data downloading
+    bytes           # for downloading downloading
     clerr           # for error reporting
     colored         # for error reporting
     enc             # for web-cache file-name encoding

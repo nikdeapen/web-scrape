@@ -8,12 +8,12 @@ use file_storage::{FilePath, FolderPath};
 use std::hash::{DefaultHasher, Hash, Hasher};
 use web_url::WebUrl;
 
-/// Responsible for caching data from the web.
+/// Responsible for caching web data.
 #[derive(Clone, Debug)]
 pub struct WebCache {
     local: Option<FolderPath>,
     remote: Option<FolderPath>,
-    base_64_encoder: Base64Encoder,
+    encoder: Base64Encoder,
     extension: String,
 }
 
@@ -25,7 +25,7 @@ impl WebCache {
         Self {
             local,
             remote,
-            base_64_encoder: Base64Encoder::default(),
+            encoder: Base64Encoder::url_safe_encoder(),
             extension: ".web-cache".to_string(),
         }
     }
@@ -68,6 +68,7 @@ impl WebCache {
         Ok(())
     }
 
+    /// Writes the `data` from the `url` to the `root` folder.
     fn write_to_root(&self, url: &WebUrl, data: &[u8], root: &FolderPath) -> Result<(), Error> {
         let file: FilePath = self.file_for_root(url, root)?;
         file.delete()?;
@@ -82,12 +83,12 @@ impl WebCache {
     fn file_for_root(&self, url: &WebUrl, root: &FolderPath) -> Result<FilePath, Error> {
         let folder_char: char = self.folder_char(url.as_str());
         let base_64: String = self
-            .base_64_encoder
+            .encoder
             .encode_as_string(url.as_str().as_bytes())
             .map_err(|e| {
                 Error::Other(
                     Report::new(Code::error(
-                        "CACHE_BASE_64",
+                        "WEB_CACHE_BASE_64",
                         format!("error converting the URL to base-64: {}", url),
                     ))
                     .with_entry(vec![e.to_string().normal()]),
@@ -104,7 +105,7 @@ impl WebCache {
             .make_file(self.extension.as_str())
             .map_err(|path| {
                 Error::Other(Report::new(Code::error(
-                    "CACHE_FILE_EXTENSION",
+                    "WEB_CACHE_INVALID_EXTENSION",
                     format!("the file extension makes the path a folder: {}", path),
                 )))
             })

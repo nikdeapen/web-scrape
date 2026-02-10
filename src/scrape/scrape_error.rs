@@ -15,7 +15,7 @@ pub enum ScrapeError {
     /// Expected a single value or no values but got multiple.
     ExpectedOptionalGotMultiple { selection: String },
 
-    /// Another error.
+    /// An uncategorized error.
     Other(String),
 }
 
