@@ -1,11 +1,9 @@
 use crate::Error;
 use clerr::{Code, Report};
-use colored::Colorize;
 use enc::base_64::Base64Encoder;
 use enc::hex::HexEncoder;
 use enc::StringEncoder;
 use file_storage::{FilePath, FolderPath};
-use std::hash::{DefaultHasher, Hash, Hasher};
 use web_url::WebUrl;
 
 /// Responsible for caching web data.
@@ -86,13 +84,10 @@ impl WebCache {
             .encoder
             .encode_as_string(url.as_str().as_bytes())
             .map_err(|e| {
-                Error::Other(
-                    Report::new(Code::error(
-                        "WEB_CACHE_BASE_64",
-                        format!("error converting the URL to base-64: {}", url),
-                    ))
-                    .with_entry(vec![e.to_string().normal()]),
-                )
+                Error::Other(Report::new(Code::error(
+                    "WEB_CACHE_BASE_64",
+                    format!("error converting the URL to base-64: {} -- {}", url, e),
+                )))
             })?;
         let extra: usize = folder_char.len_utf8()
             + root.path().file_separator().len_utf8()
@@ -113,15 +108,11 @@ impl WebCache {
 
     /// Gets the folder char for the cache `key`. (a single lowercase hex char)
     fn folder_char(&self, key: &str) -> char {
-        let mut hasher: DefaultHasher = DefaultHasher::default();
-        key.hash(&mut hasher);
-        let hash: u64 = hasher.finish();
-        let hash: u64 = (hash >> 32) ^ hash;
-        let hash: u64 = (hash >> 16) ^ hash;
-        let hash: u64 = (hash >> 8) ^ hash;
-        let hash: u64 = (hash >> 4) ^ hash;
-        let hash: u8 = hash as u8;
-        let (_, hex) = HexEncoder::LOWER.encode_chars(hash);
+        let mut fold: u8 = 0;
+        for byte in key.as_bytes() {
+            fold ^= byte;
+        }
+        let (_, hex) = HexEncoder::LOWER.encode_chars(fold);
         hex
     }
 }

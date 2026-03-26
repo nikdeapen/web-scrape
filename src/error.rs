@@ -1,4 +1,3 @@
-use crate::scrape;
 use crate::scrape::ScrapeError;
 use clerr::Report;
 use reqwest::StatusCode;
@@ -28,7 +27,7 @@ pub enum Error {
     Source(reqwest::Error),
 
     /// There was an error scraping the data.
-    Scrape(scrape::ScrapeError),
+    Scrape(ScrapeError),
 }
 
 impl From<Report> for Error {
@@ -63,8 +62,30 @@ impl From<ScrapeError> for Error {
 
 impl Display for Error {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:?}", self)
+        match self {
+            Self::Other(report) => write!(f, "{}", report),
+            Self::InvalidString(error) => write!(f, "invalid utf-8 string: {}", error),
+            Self::InvalidResponseStatus(status) => {
+                write!(f, "invalid response status: {}", status)
+            }
+            Self::InvalidURL { url, error_message } => {
+                write!(f, "invalid url '{}': {}", url, error_message)
+            }
+            Self::Cache(error) => write!(f, "cache error: {}", error),
+            Self::Source(error) => write!(f, "source error: {}", error),
+            Self::Scrape(error) => write!(f, "scrape error: {}", error),
+        }
     }
 }
 
-impl std::error::Error for Error {}
+impl std::error::Error for Error {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            Self::InvalidString(error) => Some(error),
+            Self::Cache(error) => Some(error),
+            Self::Source(error) => Some(error),
+            Self::Scrape(error) => Some(error),
+            _ => None,
+        }
+    }
+}
