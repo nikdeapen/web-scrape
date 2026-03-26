@@ -1,5 +1,5 @@
 pub use scrape_error::*;
-pub use scraper::*;
+pub use web_scraper::*;
 
 mod scrape_error;
-mod scraper;
+mod web_scraper;

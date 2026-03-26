@@ -19,7 +19,7 @@ impl<'a> Scraper<'a> {
     //! Properties
 
     /// Gets the element.
-    pub fn element(&self) -> ElementRef<'_> {
+    pub fn element(self) -> ElementRef<'a> {
         self.element
     }
 }
@@ -40,7 +40,7 @@ impl<'a> Scraper<'a> {
     //! All
 
     /// Scrapes all the instances of the `selection`.
-    pub fn all<T, F>(&self, selection: &str, scrape: F) -> Result<Vec<T>, ScrapeError>
+    pub fn all<T, F>(self, selection: &str, scrape: F) -> Result<Vec<T>, ScrapeError>
     where
         F: Fn(Scraper) -> Result<T, ScrapeError>,
     {
@@ -55,17 +55,17 @@ impl<'a> Scraper<'a> {
     }
 
     /// Scrapes all the text from the `selection`.
-    pub fn all_text(&self, selection: &str) -> Result<Vec<String>, ScrapeError> {
+    pub fn all_text(self, selection: &str) -> Result<Vec<String>, ScrapeError> {
         self.all(selection, |s| Ok(s.element().text().collect()))
     }
 
     /// Scrapes all the html from the `selection`.
-    pub fn all_html(&self, selection: &str) -> Result<Vec<String>, ScrapeError> {
+    pub fn all_html(self, selection: &str) -> Result<Vec<String>, ScrapeError> {
         self.all(selection, |s| Ok(s.element().html()))
     }
 
     /// Scrapes all the successful instances of the `selection`.
-    pub fn all_flat<T, F>(&self, selection: &str, scrape: F) -> Result<Vec<T>, ScrapeError>
+    pub fn all_flat<T, F>(self, selection: &str, scrape: F) -> Result<Vec<T>, ScrapeError>
     where
         F: Fn(Scraper) -> Result<Option<T>, ScrapeError>,
     {
@@ -85,7 +85,7 @@ impl<'a> Scraper<'a> {
     //! Only
 
     /// Scrapes the only instance of the `selection`.
-    pub fn only<T, F>(&self, selection: &str, scrape: F) -> Result<T, ScrapeError>
+    pub fn only<T, F>(self, selection: &str, scrape: F) -> Result<T, ScrapeError>
     where
         F: Fn(Scraper) -> Result<T, ScrapeError>,
     {
@@ -108,9 +108,9 @@ impl<'a> Scraper<'a> {
     }
 
     /// Scrapes the only instance of the `selection` attribute.
-    pub fn only_att(&self, selection: &str, att: &str) -> Result<String, ScrapeError> {
+    pub fn only_att(self, selection: &str, att: &str) -> Result<String, ScrapeError> {
         self.only(selection, |s| {
-            if let Some(att) = s.element.attr(att) {
+            if let Some(att) = s.element().attr(att) {
                 Ok(att.to_string())
             } else {
                 Err(ExpectedOneGotNone {
@@ -121,13 +121,13 @@ impl<'a> Scraper<'a> {
     }
 
     /// Scrapes the only instance of the `selection` text.
-    pub fn only_text(&self, selection: &str) -> Result<String, ScrapeError> {
-        self.only(selection, |s| Ok(s.element.text().collect()))
+    pub fn only_text(self, selection: &str) -> Result<String, ScrapeError> {
+        self.only(selection, |s| Ok(s.element().text().collect()))
     }
 
     /// Scrapes the only instance of the `selection` html.
-    pub fn only_html(&self, selection: &str) -> Result<String, ScrapeError> {
-        self.only(selection, |s| Ok(s.element.html()))
+    pub fn only_html(self, selection: &str) -> Result<String, ScrapeError> {
+        self.only(selection, |s| Ok(s.element().html()))
     }
 }
 
@@ -135,7 +135,7 @@ impl<'a> Scraper<'a> {
     //! Optional
 
     /// Scrapes the optional instance of the `selection`.
-    pub fn optional<T, F>(&self, selection: &str, scrape: F) -> Result<Option<T>, ScrapeError>
+    pub fn optional<T, F>(self, selection: &str, scrape: F) -> Result<Option<T>, ScrapeError>
     where
         F: Fn(Scraper) -> Result<T, ScrapeError>,
     {
@@ -156,12 +156,12 @@ impl<'a> Scraper<'a> {
     }
 
     /// Scrapes the optional instance of the `selection` text.
-    pub fn optional_text(&self, selection: &str) -> Result<Option<String>, ScrapeError> {
+    pub fn optional_text(self, selection: &str) -> Result<Option<String>, ScrapeError> {
         self.optional(selection, |s| Ok(s.element().text().collect()))
     }
 
     /// Scrapes the optional instance of the `selection` html.
-    pub fn optional_html(&self, selection: &str) -> Result<Option<String>, ScrapeError> {
+    pub fn optional_html(self, selection: &str) -> Result<Option<String>, ScrapeError> {
         self.optional(selection, |s| Ok(s.element().html()))
     }
 }

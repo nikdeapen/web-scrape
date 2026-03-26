@@ -19,9 +19,15 @@ pub enum ScrapeError {
     Other(String),
 }
 
-impl<S: Into<String>> From<S> for ScrapeError {
-    fn from(message: S) -> Self {
-        Self::Other(message.into())
+impl From<String> for ScrapeError {
+    fn from(message: String) -> Self {
+        Self::Other(message)
+    }
+}
+
+impl From<&str> for ScrapeError {
+    fn from(message: &str) -> Self {
+        Self::Other(message.to_string())
     }
 }
 

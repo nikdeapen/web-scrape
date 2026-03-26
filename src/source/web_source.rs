@@ -66,7 +66,7 @@ impl WebSource {
 impl WebSource {
     //! Download
 
-    /// Downloads the data from the `url`
+    /// Downloads the data from the `url`.
     fn download(&self, method: Method, url: &WebUrl) -> Result<Vec<u8>, Error> {
         let response: Response = self.client.execute(self.create_request(method, url)?)?;
         match response.status() {
@@ -81,27 +81,24 @@ impl WebSource {
     /// Creates the request.
     fn create_request(&self, method: Method, url: &WebUrl) -> Result<Request, Error> {
         if url.scheme().as_str() != "http" && url.scheme().as_str() != "https" {
-            Err(Error::InvalidURL {
+            return Err(Error::InvalidURL {
                 url: url.clone(),
                 error_message: "the scheme must be 'http' or 'https'".to_string(),
-            })
-        } else if url.fragment().is_some() {
-            Err(Error::InvalidURL {
-                url: url.clone(),
-                error_message: "the fragment must be empty".to_string(),
-            })
-        } else {
-            let mut request: Request = Request::new(
-                method,
-                Url::parse(url.as_str()).map_err(|e| Error::InvalidURL {
-                    url: url.clone(),
-                    error_message: e.to_string(),
-                })?,
-            );
-            for (name, value) in &self.headers {
-                request.headers_mut().insert(name, value.clone());
-            }
-            Ok(request)
+            });
         }
+        // clone to strip the fragment without modifying the caller's url
+        let mut url: WebUrl = url.clone();
+        url.set_fragment(None);
+        let mut request: Request = Request::new(
+            method,
+            Url::parse(url.as_str()).map_err(|e| Error::InvalidURL {
+                url: url.clone(),
+                error_message: e.to_string(),
+            })?,
+        );
+        for (name, value) in &self.headers {
+            request.headers_mut().insert(name, value.clone());
+        }
+        Ok(request)
     }
 }
