@@ -81,6 +81,7 @@ impl Display for Error {
 impl std::error::Error for Error {
     fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
         match self {
+            Self::Other(report) => Some(report),
             Self::InvalidString(error) => Some(error),
             Self::Cache(error) => Some(error),
             Self::Source(error) => Some(error),
