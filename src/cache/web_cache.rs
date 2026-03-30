@@ -84,7 +84,7 @@ impl WebCache {
             .encoder
             .encode_as_string(url.as_str().as_bytes())
             .map_err(|e| {
-                Error::Other(Report::new(Code::error(
+                Error::Other(Report::from(Code::error(
                     "WEB_CACHE_BASE_64",
                     format!("error converting the URL to base-64: {} -- {}", url, e),
                 )))
@@ -93,15 +93,18 @@ impl WebCache {
             + root.path().file_separator().len_utf8()
             + base_64.len()
             + self.extension.len();
-        root.clone_with_extra_capacity(extra)
+        root.path()
+            .clone_with_extra_capacity(extra)
             .with_appended_char(folder_char)
             .make_folder()
+            .to_path()
             .with_appended(base_64.as_str())
-            .make_file(self.extension.as_str())
-            .map_err(|path| {
-                Error::Other(Report::new(Code::error(
+            .with_appended(self.extension.as_str())
+            .to_file()
+            .map_err(|e| {
+                Error::Other(Report::from(Code::error(
                     "WEB_CACHE_INVALID_EXTENSION",
-                    format!("the file extension makes the path a folder: {}", path),
+                    format!("the file extension makes the path a folder: {}", e),
                 )))
             })
     }

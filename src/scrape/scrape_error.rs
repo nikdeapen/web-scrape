@@ -1,7 +1,7 @@
 use std::fmt::{Display, Formatter};
 
 /// A scraping error.
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ScrapeError {
     /// An invalid selection.
     InvalidSelection { selection: String, message: String },

@@ -1,3 +1,5 @@
+#![allow(clippy::module_inception)]
+
 pub use error::*;
 
 mod error;
