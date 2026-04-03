@@ -4,7 +4,7 @@ This library aids in scraping data from the web.
 
 ## Features & Dependencies
 
-    web-scrape = "0.11.0-rc.1"
+    web-scrape = "0.11.0-rc.2"
 
 There are currently no optional features.
 
